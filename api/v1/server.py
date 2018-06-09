@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, abort, make_response, request
 
-from .db import Category, DataPack
-from .util import model_paginator, query_paginator, ConstrainFailed
+from .db import Category, DataPack, User, Tag, TagRelation
+from .util import model_paginator, query_paginator, ConstrainFailed, get_tags_for_datapack
 
 bp = Blueprint("api v1", __name__)
 
@@ -36,13 +36,21 @@ def list_categories():
 @bp.route('/list/datapacks')
 def list_datapacks():
     category = request.args.get('category', '')
-    query = DataPack.select()
+    query = DataPack.select().join(User)
     if category != '':
         query = query.join(Category).where(DataPack.category.id == category)
     return query_paginator(query, lambda dp: {
         'name': dp.name,
         'id': dp.id,
+        'description': dp.description,
+        'tags': get_tags_for_datapack(dp),
+        'author': dp.author.id,
+        'likes': dp.likes,
+        'dislikes': dp.dislikes,
+        'downloads': dp.downloads,
+        'views': dp.views,
         'category': dp.category.id,
+
     })
 
 

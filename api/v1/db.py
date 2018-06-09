@@ -37,8 +37,8 @@ class DataPack(BaseModel):
 
 
 class TagRelation(BaseModel):
-    tags = ForeignKeyField(Tag)
-    packs = ForeignKeyField(DataPack)
+    tag = ForeignKeyField(Tag)
+    pack = ForeignKeyField(DataPack)
 
 
 class Comment(BaseModel):

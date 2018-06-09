@@ -3,6 +3,8 @@ import typing
 from flask import jsonify, request
 from peewee import Model, ModelSelect
 
+from api.v1.db import DataPack, Tag, TagRelation
+
 _V = typing.TypeVar('_V', bound=Model)
 
 
@@ -59,3 +61,8 @@ def query_paginator(query: ModelSelect, mapping: typing.Callable[[_V], dict]):
         'next': offset + size if more else None,
         'results': res,
     })
+
+
+def get_tags_for_datapack(datapack: DataPack):
+    return [tag.name for tag in
+            Tag.select().join(TagRelation).join(DataPack).where(TagRelation.pack.id == int(datapack.id))]
